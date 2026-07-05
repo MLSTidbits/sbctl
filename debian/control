@@ -1,0 +1,25 @@
+Source: sbctl
+Section: gnome
+Priority: optional
+Maintainer: Michael Schaecher <michaelschaecher@mlstidbits.com>
+Rules-Requires-Root: no
+Build-Depends:
+ libpcsclite-dev, debhelper-compat (= 13), asciidoc-base
+Standards-Version: 4.6.2
+Homepage: https://MLSTidbits.com/sbctl
+#Vcs-Browser: https://salsa.debian.org/debian/sbctl
+Vcs-Git: https://MLSTidbits.com/sbctl.git
+
+Package: sbctl
+Architecture: any
+Multi-Arch: foreign
+Depends:
+ systemd-boot, systemd-boot-efi, sbsigntool, efibootmgr, efitools, golang
+Suggests:
+Description: A customizable application menu for GNOME Shell
+ sbctl is a highly customizable application menu extension for GNOME Shell.
+ .
+ It provides a traditional application menu layout, similar to the classic
+ "Start Menu" found in other desktop environments, while integrating seamlessly
+ with the GNOME Shell interface.
+ .

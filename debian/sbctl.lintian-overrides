@@ -1,0 +1,4 @@
+sbctl: debian-changelog-line-too-long
+sbctl: missing-dependency-on-libc
+sbctl: description-synopsis-starts-with-article
+sbctl: hardening-no-pie [usr/sbin/sbctl]
