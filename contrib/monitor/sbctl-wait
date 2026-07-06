@@ -1,0 +1,85 @@
+#!/usr/bin/env bash
+
+# This script is used to monitor the `/boot/efi/EFI/BOOT/` and `/boot/efi/EFI/systemd/` directories for
+# changes made to the primary bootloader files. If any changes are detected, the script will use the `sbctl`
+# resign the required files to ensure that the system still boots correctly with Secure Boot enabled.
+
+function signHandler () {
+
+    local signal="${1:-SIGINT}"
+
+    if test "$sysLog" = "true" ; then
+
+    case "$signal" in
+        SIGINT|SIGTERM|SIGQUIT  )
+            event_log "info" "Received signal: $signal. Stopping $appName service..."
+        ;;
+        *                       )
+            event_log "warning" "Received unknown signal: $signal"
+        ;;
+    esac
+    fi
+
+    exit 0
+
+}
+
+function event_log () {
+
+    local eventType="${1:-info}"
+    local eventMessage="${2:-No message provided}"
+
+    if test "$sysLog" = "true" ; then
+
+        case "${eventType}" in
+            info|warning|error|critical )
+                logger -t "$appName" -p user."$eventType" "$eventMessage"
+            ;;
+            *                           )
+                logger -t "$appName" -p user."$eventType" "$eventMessage"
+            ;;
+        esac
+    else
+        echo "$(date +'%Y-%m-%d %H:%M:%S') [$eventType] $eventMessage" >&2
+    fi
+}
+
+# Uncomment the following line to enable debug output
+# set -xeo pipefail
+
+# Array of files to monitor for changes
+monitorFiles=(
+    "/boot/efi/EFI/BOOT/BOOTX64.EFI"
+    "/boot/efi/EFI/systemd/systemd-bootx64.efi"
+    "/boot/efi/EFI/ubuntu/shimx64.efi"
+    "/boot/efi/EFI/ubuntu/grubx64.efi"
+    "/boot/efi/EFI/BOOT/mmx64.efi"
+    "/boot/efi/EFI/BOOT/fbx64.efi"
+)
+
+appName="sbctl-wait"
+
+sysLog="true"
+
+trap 'signHandler SIGINT'  SIGINT
+trap 'signHandler SIGTERM' SIGTERM
+trap 'signHandler SIGQUIT' SIGQUIT
+
+while true; do
+    inotifywait -q -q -e modify,create,delete,move "${monitorFiles[@]}" && {
+
+        signFailed=0
+
+        for file in "${monitorFiles[@]}"; do
+            event_log "info" "Detected change in $file. Attempting to sign..."
+            [[ -f "$file" ]] || continue
+            sbctl sign "$file" || { event_log "error" "Failed to sign $file"; signFailed=1; }
+        done
+
+        [[ "$signFailed" -eq 0 ]] && event_log "info" "All monitored files have been signed successfully."
+
+    }
+
+    sleep 10
+
+done
