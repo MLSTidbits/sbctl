@@ -1,5 +1,5 @@
 Source: sbctl
-Section: gnome
+Section: admin
 Priority: optional
 Maintainer: Michael Schaecher <michaelschaecher@mlstidbits.com>
 Rules-Requires-Root: no
