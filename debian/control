@@ -14,7 +14,7 @@ Package: sbctl
 Architecture: any
 Multi-Arch: foreign
 Depends:
- systemd-boot, systemd-boot-efi, sbsigntool, efibootmgr, efitools, golang
+ systemd-boot, systemd-boot-efi, sbsigntool, efibootmgr, efitools, golang, inotify-tools
 Suggests:
 Description: A customizable application menu for GNOME Shell
  sbctl is a highly customizable application menu extension for GNOME Shell.
