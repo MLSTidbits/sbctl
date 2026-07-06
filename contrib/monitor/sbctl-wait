@@ -70,7 +70,7 @@ trap 'signHandler SIGQUIT' SIGQUIT
 (( "$(id -u)" == 0 )) || event_log "error" "This script must be run as root. Exiting."
 
 while true; do
-    inotifywait -q -q -e modify,create,delete,move "${monitorFiles[@]}" && {
+    inotifywait -q -q -r -e modify,create,delete,move -t 0 /boot/efi/EFI && {
 
         signFailed=0
 
@@ -84,6 +84,6 @@ while true; do
 
     }
 
-    sleep 10
+    sleep 1
 
 done
