@@ -67,7 +67,7 @@ trap 'signHandler SIGTERM' SIGTERM
 trap 'signHandler SIGQUIT' SIGQUIT
 
 # Make sure this is run as root, since signing requires elevated privileges
-[[ $EUID -gt 0 ]] || event_log "error" "This script must be run as root. Exiting."
+(( "$(id -u)" == 0 )) || event_log "error" "This script must be run as root. Exiting."
 
 while true; do
     inotifywait -q -q -e modify,create,delete,move "${monitorFiles[@]}" && {
