@@ -1,0 +1,10 @@
+[Unit]
+Description = Monitor and manage signing bootloader for Secure Boot
+
+[Service]
+Type = simple
+LogLevelMax = notice
+ExecStart = /usr/sbin/sbctl-wait
+
+[Install]
+WantedBy = multi-user.target

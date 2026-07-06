@@ -34,6 +34,7 @@ function event_log () {
         case "${eventType}" in
             info|warning|error|critical )
                 logger -t "$appName" -p user."$eventType" "$eventMessage"
+                [[ "$eventType" = "error" ]] && exit 1
             ;;
             *                           )
                 logger -t "$appName" -p user."$eventType" "$eventMessage"
@@ -65,6 +66,9 @@ trap 'signHandler SIGINT'  SIGINT
 trap 'signHandler SIGTERM' SIGTERM
 trap 'signHandler SIGQUIT' SIGQUIT
 
+# Make sure this is run as root, since signing requires elevated privileges
+[[ $EUID -gt 0 ]] || event_log "error" "This script must be run as root. Exiting."
+
 while true; do
     inotifywait -q -q -e modify,create,delete,move "${monitorFiles[@]}" && {
 
@@ -76,7 +80,7 @@ while true; do
             sbctl sign "$file" || { event_log "error" "Failed to sign $file"; signFailed=1; }
         done
 
-        [[ "$signFailed" -eq 0 ]] && event_log "info" "All monitored files have been signed successfully."
+        [[ "$signFailed" -lt 1 ]] || event_log "info" "All monitored files have been signed successfully."
 
     }
 

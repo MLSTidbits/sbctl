@@ -1,0 +1,15 @@
+#!/bin/sh
+
+set -e
+
+case "$1" in
+  remove)
+    if [ -z "${DPKG_ROOT:-}" ] && [ -d /run/systemd/system ]; then
+      deb-systemd-invoke stop 'sbctl.service' >/dev/null || true
+    fi
+    ;;
+
+  *)
+    # No action for other arguments
+    ;;
+esac

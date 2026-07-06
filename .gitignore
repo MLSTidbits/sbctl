@@ -15,6 +15,7 @@ debian/sbctl/
 debian/.debhelper/
 debian/.debhelper-build/
 debian/debhelper-*
+debian/sbctl.postrm.debhelper
 debian/.debhelper-clean/
 debian/changelog
 

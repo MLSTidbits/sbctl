@@ -1,3 +1,4 @@
 sbctl usr/sbin/
+contrib/monitor/sbctl-wait usr/sbin/
 
 contrib/kernel-install/91-sbctl.install usr/lib/kernel/install.d/
